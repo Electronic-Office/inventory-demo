@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EO Inventory Demo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#3551a4">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EO Inv Demo">
+<meta name="description" content="EO Inventory Demo: the EO Project Inventory app in demo mode, for presenting. Sample data only.">
+<script>
+// Installed (home-screen) launch: go straight to the app in Rewst. Runs before anything renders.
+// DEMO launcher: demo=1 is always added, so it always opens on sample data (nothing is written to ConnectWise).
+// go= picks the page (allow-list only, so this can't be used to redirect anywhere else); u / p / t pass through.
+(function () {
+  var BASE = "https://app.rewst.ai/runtime/orgs/the-electronic-office-of-asheville/apps/eo-project-inventory";
+  var PAGES = { "": "", receive: "/receive", unit: "/unit", service: "/service", warehouse: "/warehouse" };
+  var q = new URLSearchParams(window.location.search), go = q.get("go") || "", keep = [];
+  if (!Object.prototype.hasOwnProperty.call(PAGES, go)) { go = ""; }
+  [["u", /^[0-9]{1,9}-[0-9]{1,4}$/], ["p", /^[0-9]{1,9}$/], ["t", /^[0-9]{1,9}$/], ["demo", /^1$/]].forEach(function (k) {
+    var v = q.get(k[0]); if (v && k[1].test(v)) { keep.push(k[0] + "=" + encodeURIComponent(v)); }
+  });
+  if (keep.indexOf("demo=1") < 0) { keep.push("demo=1"); }
+  window.EPI_TARGET = BASE + PAGES[go] + "?" + keep.join("&");
+  window.EPI_STANDALONE = !!(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches));
+  if (window.EPI_STANDALONE) { window.location.replace(window.EPI_TARGET); }
+})();
+</script>
+<style>
+  :root { --navy: #3551a4; --navy-d: #233a7d; --gold: #df9832; --ink: #18223a; --muted: #5b6680; --line: #dfe4ef; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; color: var(--ink);
+    background: radial-gradient(1200px 600px at 10% -10%, #e8edf9 0%, transparent 60%), radial-gradient(900px 500px at 110% 10%, #fbf1e3 0%, transparent 55%), #f5f7fb; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 20px 18px 120px; }
+  .head { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,.8); border: 1px solid var(--line); box-shadow: 0 6px 20px rgba(24,34,58,.06); }
+  .head img { height: 26px; }
+  .head .div { width: 1px; height: 24px; background: var(--line); }
+  .head small { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .head b { font-size: 14px; }
+  .hero { margin-top: 18px; padding: 26px 22px; border-radius: 22px; color: #fff; background: linear-gradient(140deg, var(--navy) 0%, var(--navy-d) 100%); box-shadow: 0 14px 34px rgba(53,81,164,.28); text-align: center; }
+  .hero img { width: 88px; height: 88px; border-radius: 22px; box-shadow: 0 8px 22px rgba(0,0,0,.25); }
+  .hero h1 { margin: 14px 0 6px; font-size: 24px; }
+  .hero p { margin: 0; opacity: .9; font-size: 15px; line-height: 1.45; }
+  .btn { display: block; width: 100%; margin-top: 14px; padding: 15px 18px; border-radius: 14px; border: 0; font: 600 16px/1.2 inherit; cursor: pointer; text-align: center; text-decoration: none; }
+  .btn.gold { background: var(--gold); color: #1d1405; }
+  .btn.ghost { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  .card { margin-top: 16px; padding: 16px 18px; border-radius: 16px; background: #fff; border: 1px solid var(--line); font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .card b { color: var(--ink); }
+  .hidden { display: none !important; }
+  /* Install sheet: opens by itself on a phone that hasn't installed yet */
+  .scrim { position: fixed; inset: 0; background: rgba(15,22,40,.45); }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom)); background: #fff; border-radius: 22px 22px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,.18); animation: up .25s ease-out; }
+  @keyframes up { from { transform: translateY(100%); } to { transform: none; } }
+  .sheet .row { display: flex; gap: 14px; align-items: center; }
+  .sheet .row img { width: 56px; height: 56px; border-radius: 14px; }
+  .sheet h2 { margin: 0; font-size: 18px; }
+  .sheet .sub { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  .steps { margin: 16px 0 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { counter-increment: s; position: relative; padding: 8px 0 8px 40px; font-size: 15px; line-height: 1.4; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 6px; width: 28px; height: 28px; border-radius: 50%; background: #eef2fb; color: var(--navy); font-weight: 700; display: grid; place-items: center; }
+  .share { display: inline-block; vertical-align: -4px; width: 20px; height: 20px; }
+  .later { display: block; margin: 12px auto 26px; background: none; border: 0; color: var(--muted); font: 500 14px inherit; cursor: pointer; }
+  .arrow { position: fixed; bottom: 6px; left: 50%; transform: translateX(-50%); font-size: 30px; color: var(--gold); animation: bob 1s ease-in-out infinite; text-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  @keyframes bob { 50% { transform: translate(-50%, 6px); } }
+  .chip { display: table; margin: 12px auto 0; padding: 4px 12px; border-radius: 999px; background: var(--gold); color: #1d1405; font: 700 12px/1.4 inherit; letter-spacing: .1em; }
+  .foot { margin-top: 28px; text-align: center; font-size: 12px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><img src="https://www.electronicoffice.net/wp-content/uploads/2023/02/EO-Logo-new-no-tagline-Landscape.svg" alt="EO"><span class="div"></span><span><small>EO Automation</small><b>Inventory Demo</b></span></div>
+  <div class="hero">
+    <img src="icon-512.png" alt="">
+    <span class="chip">DEMO</span>
+    <h1>EO Inventory Demo</h1>
+    <p>The EO Project Inventory app on sample projects and hardware. Safe to click anything: nothing is saved to ConnectWise.</p>
+    <button type="button" class="btn gold hidden" id="install">Install the app</button>
+    <a class="btn ghost" id="open" href="#">Open in the browser instead</a>
+  </div>
+  <div class="card hidden" id="done"><b>Installed.</b> Open <b>EO Inv Demo</b> from your home screen. The first time, sign in to Rewst with your EO account.</div>
+  <div class="card hidden" id="desk"><b>Presenting from a computer?</b> Use <b>Open in the browser</b> to run the demo here. To show it on a phone, open this page on the phone and install it.</div>
+  <div class="foot">&copy; The Electronic Office &middot; Built by EO Automation<br>Professionalism &middot; Accountability &middot; Responsiveness &middot; Teamwork &middot; Integrity</div>
+</div>
+
+<div id="sheetWrap" class="hidden">
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="row"><img src="icon-192.png" alt=""><div><h2 id="sheetTitle">Install EO Inventory Demo</h2><p class="sub">Adds an app icon to your home screen.</p></div></div>
+    <button type="button" class="btn gold hidden" id="sheetInstall">Install</button>
+    <ol class="steps hidden" id="iosSteps">
+      <li>Tap <b>Share</b> <svg class="share" viewBox="0 0 24 24" fill="none" stroke="#3551a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg> in the bar below.</li>
+      <li>Scroll down and tap <b>Add to Home Screen</b>.</li>
+      <li>Tap <b>Add</b>.</li>
+    </ol>
+    <ol class="steps hidden" id="iosOther"><li>This browser can't install apps on iPhone. Tap the menu and choose <b>Open in Safari</b>, then install from there.</li></ol>
+    <ol class="steps hidden" id="andSteps"><li>Tap the <b>&#8942;</b> menu at the top right.</li><li>Tap <b>Install app</b> (or <b>Add to Home screen</b>).</li></ol>
+    <button type="button" class="later" id="later">Not now</button>
+  </div>
+  <div class="arrow hidden" id="arrow" aria-hidden="true">&#8595;</div>
+</div>
+
+<script>
+(function () {
+  if (window.EPI_STANDALONE) { return; }
+  if ("serviceWorker" in navigator && window.location.protocol === "https:") { navigator.serviceWorker.register("sw.js"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var ua = navigator.userAgent;
+  var ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var iosSafari = ios && !/CriOS|FxiOS|EdgiOS|GSA|FBAN|FBAV|Instagram/.test(ua);
+  var android = /Android/.test(ua), phone = ios || android, deferred = null;
+  $("open").href = window.EPI_TARGET;
+  function show(id) { $(id).classList.remove("hidden"); }
+  function hide(id) { $(id).classList.add("hidden"); }
+  function openSheet() {
+    show("sheetWrap");
+    if (deferred) { show("sheetInstall"); hide("andSteps"); }
+    else if (iosSafari) { show("iosSteps"); show("arrow"); }
+    else if (ios) { show("iosOther"); }
+    else { show("andSteps"); }
+  }
+  function closeSheet() { hide("sheetWrap"); }
+  function runPrompt() {
+    if (!deferred) { openSheet(); return; }
+    var d = deferred; deferred = null; d.prompt();
+    d.userChoice.then(function (c) { closeSheet(); if (c && c.outcome === "accepted") { hide("install"); show("done"); } });
+  }
+  // Android Chrome / Edge / Samsung: the browser's own install dialog (it needs one tap; browsers don't allow it without one).
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault(); deferred = e; show("install");
+    if (!$("sheetWrap").classList.contains("hidden")) { show("sheetInstall"); hide("andSteps"); }
+  });
+  window.addEventListener("appinstalled", function () { closeSheet(); hide("install"); show("done"); });
+  $("install").addEventListener("click", runPrompt);
+  $("sheetInstall").addEventListener("click", runPrompt);
+  $("later").addEventListener("click", closeSheet);
+  $("scrim").addEventListener("click", closeSheet);
+  if (!phone) { show("desk"); return; }
+  if (ios) { show("install"); $("install").textContent = "How to install"; }
+  // Open the install sheet by itself shortly after load (gives Android time to fire beforeinstallprompt first).
+  setTimeout(openSheet, 900);
+})();
+</script>
+</body>
+</html>
