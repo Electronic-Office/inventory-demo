@@ -11,21 +11,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="EO Inv Demo">
-<meta name="description" content="EO Inventory Demo: the EO Project Inventory app in demo mode, for presenting. Sample data only.">
+<meta name="description" content="EO Inventory Demo: opens the EO Inventory demo app in Rewst.">
 <script>
 // Installed (home-screen) launch: go straight to the app in Rewst. Runs before anything renders.
-// DEMO launcher: demo=1 is always added, so it always opens on sample data (nothing is written to ConnectWise).
+// DEMO launcher: opens the EO Inventory (Open Mic Demo) app (ab77368f, slug eo-inventory-open-mic-demo-2), a one-page app.
 // go= picks the page (allow-list only, so this can't be used to redirect anywhere else); u / p / t pass through.
 (function () {
-  var BASE = "https://app.rewst.ai/runtime/orgs/the-electronic-office-of-asheville/apps/eo-project-inventory";
-  var PAGES = { "": "", receive: "/receive", unit: "/unit", service: "/service", warehouse: "/warehouse" };
+  var BASE = "https://app.rewst.ai/runtime/orgs/the-electronic-office-of-asheville/apps/eo-inventory-open-mic-demo-2";
+  var PAGES = { "": "" };
   var q = new URLSearchParams(window.location.search), go = q.get("go") || "", keep = [];
   if (!Object.prototype.hasOwnProperty.call(PAGES, go)) { go = ""; }
-  [["u", /^[0-9]{1,9}-[0-9]{1,4}$/], ["p", /^[0-9]{1,9}$/], ["t", /^[0-9]{1,9}$/], ["demo", /^1$/]].forEach(function (k) {
+  [].forEach(function (k) {
     var v = q.get(k[0]); if (v && k[1].test(v)) { keep.push(k[0] + "=" + encodeURIComponent(v)); }
   });
-  if (keep.indexOf("demo=1") < 0) { keep.push("demo=1"); }
-  window.EPI_TARGET = BASE + PAGES[go] + "?" + keep.join("&");
+  window.EPI_TARGET = BASE + PAGES[go] + (keep.length ? "?" + keep.join("&") : "");
   window.EPI_STANDALONE = !!(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches));
   if (window.EPI_STANDALONE) { window.location.replace(window.EPI_TARGET); }
 })();
@@ -78,7 +77,7 @@
     <img src="icon-512.png" alt="">
     <span class="chip">DEMO</span>
     <h1>EO Inventory Demo</h1>
-    <p>The EO Project Inventory app on sample projects and hardware. Safe to click anything: nothing is saved to ConnectWise.</p>
+    <p>Receive, label, stage and pick up hardware from your phone.</p>
     <button type="button" class="btn gold hidden" id="install">Install the app</button>
     <a class="btn ghost" id="open" href="#">Open in the browser instead</a>
   </div>

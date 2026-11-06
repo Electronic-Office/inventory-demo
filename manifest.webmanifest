@@ -7,7 +7,7 @@
   "display": "standalone",
   "background_color": "#1c3a96",
   "theme_color": "#3551a4",
-  "description": "EO Project Inventory in demo mode for presenting. Sample data only; opens the EO app in Rewst.",
+  "description": "EO Inventory demo for presenting. Opens the EO app in Rewst.",
   "icons": [
     {
       "src": "icon-192.png",
